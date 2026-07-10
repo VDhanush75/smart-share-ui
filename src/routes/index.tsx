@@ -18,7 +18,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "SmartShare — Share Files to Smart TV Instantly" },
       {
         property: "og:description",
-        content: "Upload any file from your phone and open it on the Smart TV.",
+        content: "Upload any file from your phone and open it on the Smart TV using a Share Code or QR Code.",
       },
     ],
   }),

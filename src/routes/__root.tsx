@@ -84,13 +84,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Upload any file from your phone and open it on the Smart TV using a Share Code or QR Code.",
       },
       { name: "theme-color", content: "#2f6bff" },
-      { property: "og:title", content: "SmartShare" },
+      { property: "og:title", content: "SmartShare — Share Files to Smart TV Instantly" },
       {
         property: "og:description",
-        content: "Share files from your phone to any Smart TV instantly.",
+        content: "Upload any file from your phone and open it on the Smart TV using a Share Code or QR Code.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "SmartShare — Share Files to Smart TV Instantly" },
+      { name: "twitter:description", content: "Upload any file from your phone and open it on the Smart TV using a Share Code or QR Code." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a5750928-ebdd-4f82-bd86-03303863805a/id-preview-585b065d--3016dfb0-3a94-414f-995b-ec681f573903.lovable.app-1783678964740.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a5750928-ebdd-4f82-bd86-03303863805a/id-preview-585b065d--3016dfb0-3a94-414f-995b-ec681f573903.lovable.app-1783678964740.png" },
     ],
     links: [
       {
