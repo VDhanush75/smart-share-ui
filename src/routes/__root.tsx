@@ -77,14 +77,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "SmartShare — Share Files to Smart TV Instantly" },
+      {
+        name: "description",
+        content:
+          "Upload any file from your phone and open it on the Smart TV using a Share Code or QR Code.",
+      },
+      { name: "theme-color", content: "#2f6bff" },
+      { property: "og:title", content: "SmartShare" },
+      {
+        property: "og:description",
+        content: "Share files from your phone to any Smart TV instantly.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
