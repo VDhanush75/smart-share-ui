@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/smartshare/Logo";
 import { UploadArea } from "@/components/smartshare/UploadArea";
 import { ProgressBar } from "@/components/smartshare/ProgressBar";
+import { OpenResourceCard } from "@/components/smartshare/OpenResourceCard";
 import { uploadAndRegisterFile } from "@/services/uploadService";
 import { toast } from "sonner";
 
@@ -115,6 +116,8 @@ function HomePage() {
             </div>
           ))}
         </section>
+
+        <OpenResourceCard />
       </main>
     </div>
   );

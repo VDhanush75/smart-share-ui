@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/smartshare/Logo";
 import { ShareCodeCard } from "@/components/smartshare/ShareCodeCard";
 import { QRCard } from "@/components/smartshare/QRCard";
+import { DirectLinkCard } from "@/components/smartshare/DirectLinkCard";
 
 interface SuccessState {
   share_code?: string;
@@ -69,6 +70,12 @@ function SuccessPage() {
           <ShareCodeCard code={shareCode} />
           <QRCard value={shareUrl} />
         </div>
+
+        <div className="mt-4">
+          <DirectLinkCard url={shareUrl} />
+        </div>
+
+
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Button asChild variant="outline" size="lg" className="rounded-full">
