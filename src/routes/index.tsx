@@ -1,11 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Tv, Zap, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/smartshare/Logo";
 import { UploadArea } from "@/components/smartshare/UploadArea";
 import { ProgressBar } from "@/components/smartshare/ProgressBar";
-import { uploadResource } from "@/lib/upload";
+import { uploadAndRegisterFile } from "@/services/uploadService";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
