@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/smartshare/Logo";
 import { ShareCodeCard } from "@/components/smartshare/ShareCodeCard";
 import { QRCard } from "@/components/smartshare/QRCard";
+import { DirectLinkCard } from "@/components/smartshare/DirectLinkCard";
 
 interface SuccessState {
   share_code?: string;
