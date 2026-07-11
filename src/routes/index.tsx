@@ -64,7 +64,7 @@ function HomePage() {
       <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
         <Logo />
         <div className="hidden items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground sm:flex">
-          <Tv className="h-3.5 w-3.5 text-primary" /> TV-ready
+          <Tv className="h-3.5 w-3.5 text-primary" /> Device-ready
         </div>
       </header>
 
@@ -74,7 +74,7 @@ function HomePage() {
             <Zap className="h-3.5 w-3.5" /> Instant sharing
           </div>
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-5xl">
-            Share Files to Instantly{" "}
+            Share Files to Any Device{" "}
             <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
               Instantly
             </span>
