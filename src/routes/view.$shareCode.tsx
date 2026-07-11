@@ -1,10 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { FileText, FileType2, Image as ImageIcon, Music, PlayCircle, FileQuestion } from "lucide-react";
+import { useEffect, useState } from "react";
+import { FileQuestion, Loader2 } from "lucide-react";
 import { ViewerLayout } from "@/components/smartshare/ViewerLayout";
 import { EmptyState } from "@/components/smartshare/EmptyState";
 import { Button } from "@/components/ui/button";
-import { detectKind, type ResourceKind } from "@/lib/file-type";
+import {
+  getResourceByShareCode,
+  incrementViews,
+  fetchTextPreview,
+  type ResourceRow,
+} from "@/services/resourceService";
 
 export const Route = createFileRoute("/view/$shareCode")({
   head: () => ({
@@ -17,107 +22,266 @@ export const Route = createFileRoute("/view/$shareCode")({
   component: ViewPage,
 });
 
-// Placeholder resource — real data will come from backend in v2.
-const PLACEHOLDER_NAME = "Presentation_Q4_Review.pdf";
+type Status = "loading" | "not_found" | "expired" | "ready" | "error";
 
 function ViewPage() {
   const { shareCode } = Route.useParams();
-  const [kind, setKind] = useState<ResourceKind>(detectKind(PLACEHOLDER_NAME));
+  const [status, setStatus] = useState<Status>("loading");
+  const [resource, setResource] = useState<ResourceRow | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setStatus("loading");
+      try {
+        const res = await getResourceByShareCode(shareCode);
+        if (cancelled) return;
+        if (!res) {
+          setStatus("not_found");
+          return;
+        }
+        if (new Date(res.expires_at).getTime() < Date.now()) {
+          setResource(res);
+          setStatus("expired");
+          return;
+        }
+        setResource(res);
+        setStatus("ready");
+        incrementViews(res.id).catch(() => {
+          /* non-critical */
+        });
+      } catch (e) {
+        if (cancelled) return;
+        setErrorMsg(e instanceof Error ? e.message : "Failed to load resource");
+        setStatus("error");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [shareCode]);
+
+  const handleDownload = () => {
+    if (!resource) return;
+    const a = document.createElement("a");
+    a.href = resource.public_url;
+    a.download = resource.original_name;
+    a.rel = "noopener";
+    a.target = "_blank";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+
+  if (status === "loading") {
+    return (
+      <ViewerLayout resourceName="Loading…">
+        <div className="grid place-items-center py-24 text-muted-foreground">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </ViewerLayout>
+    );
+  }
+
+  if (status === "not_found") {
+    return (
+      <ViewerLayout resourceName="Not found">
+        <EmptyState
+          icon={FileQuestion}
+          title="Resource not found"
+          description={`No resource matches share code "${shareCode}".`}
+        />
+      </ViewerLayout>
+    );
+  }
+
+  if (status === "expired") {
+    return (
+      <ViewerLayout resourceName={resource?.original_name ?? "Expired"}>
+        <EmptyState
+          icon={FileQuestion}
+          title="This resource has expired."
+          description="Shared resources are available for 24 hours. Ask the sender to upload it again."
+        />
+      </ViewerLayout>
+    );
+  }
+
+  if (status === "error" || !resource) {
+    return (
+      <ViewerLayout resourceName="Error">
+        <EmptyState
+          icon={FileQuestion}
+          title="Something went wrong"
+          description={errorMsg || "Unable to load this resource."}
+        />
+      </ViewerLayout>
+    );
+  }
 
   return (
-    <ViewerLayout resourceName={PLACEHOLDER_NAME}>
+    <ViewerLayout resourceName={resource.original_name} onDownload={handleDownload}>
       <div className="mb-4 flex flex-wrap items-center gap-2 text-xs">
         <span className="rounded-full bg-primary-soft px-3 py-1 font-mono font-semibold text-primary">
           {shareCode}
         </span>
-        <span className="text-muted-foreground">Preview mode · UI placeholder</span>
+        <span className="text-muted-foreground">
+          Uploaded {formatDate(resource.created_at)} · {formatBytes(resource.file_size)}
+        </span>
       </div>
 
       <div className="rounded-3xl border border-border bg-card p-4 shadow-[var(--shadow-card)] sm:p-8">
-        <ResourcePreview kind={kind} name={PLACEHOLDER_NAME} />
+        <ResourcePreview resource={resource} onDownload={handleDownload} />
       </div>
 
-      <div className="mt-6 rounded-2xl border border-dashed border-border bg-muted/40 p-4">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          Demo · Try preview types
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {(["image", "video", "pdf", "document", "audio", "unknown"] as ResourceKind[]).map(
-            (k) => (
-              <Button
-                key={k}
-                size="sm"
-                variant={kind === k ? "default" : "outline"}
-                onClick={() => setKind(k)}
-                className="rounded-full capitalize"
-              >
-                {k}
-              </Button>
-            ),
-          )}
-        </div>
+      <div className="mt-6 grid gap-3 rounded-2xl border border-border bg-card p-5 sm:grid-cols-2">
+        <MetaRow label="File name" value={resource.original_name} />
+        <MetaRow label="File size" value={formatBytes(resource.file_size)} />
+        <MetaRow label="Uploaded" value={formatDate(resource.created_at)} />
+        <MetaRow label="Type" value={resource.mime_type || resource.file_type} />
       </div>
     </ViewerLayout>
   );
 }
 
-function ResourcePreview({ kind, name }: { kind: ResourceKind; name: string }) {
-  switch (kind) {
-    case "image":
-      return (
-        <div className="grid aspect-video place-items-center rounded-2xl bg-gradient-to-br from-primary-soft to-secondary">
-          <div className="flex flex-col items-center gap-3 text-primary">
-            <ImageIcon className="h-16 w-16" />
-            <p className="text-sm font-medium text-muted-foreground">Image preview</p>
-          </div>
-        </div>
-      );
-    case "video":
-      return (
-        <div className="relative grid aspect-video place-items-center rounded-2xl bg-foreground/90">
-          <PlayCircle className="h-20 w-20 text-primary-foreground" strokeWidth={1.5} />
-          <p className="absolute bottom-4 text-xs font-medium text-primary-foreground/70">
-            Video preview
-          </p>
-        </div>
-      );
-    case "pdf":
-      return (
-        <div className="grid aspect-[3/4] max-h-[70vh] place-items-center rounded-2xl bg-muted sm:aspect-video">
-          <div className="flex flex-col items-center gap-3 text-primary">
-            <FileType2 className="h-16 w-16" />
-            <p className="text-sm font-medium text-muted-foreground">PDF preview — {name}</p>
-          </div>
-        </div>
-      );
-    case "document":
-      return (
-        <div className="grid aspect-video place-items-center rounded-2xl bg-muted">
-          <div className="flex flex-col items-center gap-3 text-primary">
-            <FileText className="h-16 w-16" />
-            <p className="text-sm font-medium text-muted-foreground">Document preview</p>
-          </div>
-        </div>
-      );
-    case "audio":
-      return (
-        <div className="grid place-items-center rounded-2xl bg-gradient-to-br from-primary-soft to-secondary py-16">
-          <div className="flex flex-col items-center gap-3 text-primary">
-            <Music className="h-16 w-16" />
-            <div className="h-2 w-64 rounded-full bg-card">
-              <div className="h-full w-1/3 rounded-full bg-primary" />
-            </div>
-            <p className="text-sm font-medium text-muted-foreground">Audio player</p>
-          </div>
-        </div>
-      );
-    default:
-      return (
-        <EmptyState
-          icon={FileQuestion}
-          title="Preview not available"
-          description="This file type can't be previewed in the browser, but you can still download it."
-        />
-      );
+function MetaRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </p>
+      <p className="mt-1 break-words text-sm font-medium text-foreground">{value}</p>
+    </div>
+  );
+}
+
+function ResourcePreview({
+  resource,
+  onDownload,
+}: {
+  resource: ResourceRow;
+  onDownload: () => void;
+}) {
+  const mime = resource.mime_type || "";
+
+  if (mime.startsWith("image/")) {
+    return (
+      <img
+        src={resource.public_url}
+        alt={resource.original_name}
+        className="mx-auto max-h-[70vh] w-auto rounded-2xl object-contain"
+      />
+    );
   }
+
+  if (mime.startsWith("video/")) {
+    return (
+      <video
+        src={resource.public_url}
+        controls
+        className="mx-auto max-h-[70vh] w-full rounded-2xl bg-black"
+      />
+    );
+  }
+
+  if (mime.startsWith("audio/")) {
+    return (
+      <div className="py-8">
+        <audio src={resource.public_url} controls className="mx-auto w-full max-w-lg" />
+      </div>
+    );
+  }
+
+  if (mime === "application/pdf") {
+    return (
+      <iframe
+        src={resource.public_url}
+        title={resource.original_name}
+        className="h-[75vh] w-full rounded-2xl border border-border bg-muted"
+      />
+    );
+  }
+
+  if (mime.startsWith("text/") || mime === "application/json") {
+    return <TextPreview resource={resource} onDownload={onDownload} />;
+  }
+
+  return (
+    <EmptyState
+      icon={FileQuestion}
+      title="Preview not available"
+      description="This file type can't be previewed in the browser, but you can still download it."
+      action={
+        <Button onClick={onDownload} className="rounded-full">
+          Download file
+        </Button>
+      }
+    />
+  );
+}
+
+function TextPreview({
+  resource,
+  onDownload,
+}: {
+  resource: ResourceRow;
+  onDownload: () => void;
+}) {
+  const [text, setText] = useState<string | null>(null);
+  const [err, setErr] = useState<string>("");
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchTextPreview(resource.public_url)
+      .then((t) => !cancelled && setText(t))
+      .catch((e) => !cancelled && setErr(e instanceof Error ? e.message : "Failed to load text"));
+    return () => {
+      cancelled = true;
+    };
+  }, [resource.public_url]);
+
+  if (err) {
+    return (
+      <EmptyState
+        icon={FileQuestion}
+        title="Couldn't load text preview"
+        description={err}
+        action={
+          <Button onClick={onDownload} className="rounded-full">
+            Download file
+          </Button>
+        }
+      />
+    );
+  }
+
+  if (text === null) {
+    return (
+      <div className="grid place-items-center py-16 text-muted-foreground">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <pre className="max-h-[70vh] overflow-auto whitespace-pre-wrap break-words rounded-2xl bg-muted p-4 text-sm text-foreground">
+      {text}
+    </pre>
+  );
+}
+
+function formatBytes(bytes: number): string {
+  if (!bytes) return "0 B";
+  const units = ["B", "KB", "MB", "GB"];
+  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+  return `${(bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
+}
+
+function formatDate(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
 }
