@@ -1,11 +1,15 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/smartshare/Logo";
 import { ShareCodeCard } from "@/components/smartshare/ShareCodeCard";
 import { QRCard } from "@/components/smartshare/QRCard";
 
-const DEMO_CODE = "AB39KD";
+interface SuccessState {
+  share_code?: string;
+  public_url?: string;
+  original_name?: string;
+}
 
 export const Route = createFileRoute("/success")({
   head: () => ({
@@ -19,7 +23,32 @@ export const Route = createFileRoute("/success")({
 
 function SuccessPage() {
   const navigate = useNavigate();
-  const shareUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/view/${DEMO_CODE}`;
+  const state = useRouterState({
+    select: (s) => (s.location.state as SuccessState) ?? {},
+  });
+  const shareCode = state.share_code ?? "";
+  const shareUrl = shareCode
+    ? `${typeof window !== "undefined" ? window.location.origin : ""}/view/${shareCode}`
+    : "";
+
+  if (!shareCode) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-primary-soft/40 via-background to-background">
+        <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
+          <Logo />
+        </header>
+        <main className="mx-auto max-w-md px-4 pb-16 pt-10 text-center sm:px-6">
+          <h1 className="text-2xl font-bold text-foreground">No upload found</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Please upload a file first to generate a Share Code.
+          </p>
+          <Button asChild size="lg" className="mt-6 rounded-full">
+            <Link to="/">Go to Upload</Link>
+          </Button>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-soft/40 via-background to-background">
@@ -36,12 +65,14 @@ function SuccessPage() {
             Upload Successful
           </h1>
           <p className="mt-2 max-w-md text-sm text-muted-foreground sm:text-base">
-            Your file is ready. Use the Share Code or scan the QR on your Smart TV.
+            {state.original_name
+              ? `“${state.original_name}” is ready. Use the Share Code or scan the QR on your Smart TV.`
+              : "Your file is ready. Use the Share Code or scan the QR on your Smart TV."}
           </p>
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <ShareCodeCard code={DEMO_CODE} />
+          <ShareCodeCard code={shareCode} />
           <QRCard value={shareUrl} />
         </div>
 
@@ -53,7 +84,7 @@ function SuccessPage() {
             size="lg"
             className="rounded-full"
             onClick={() =>
-              navigate({ to: "/view/$shareCode", params: { shareCode: DEMO_CODE } })
+              navigate({ to: "/view/$shareCode", params: { shareCode } })
             }
           >
             Open Resource
@@ -63,3 +94,4 @@ function SuccessPage() {
     </div>
   );
 }
+
