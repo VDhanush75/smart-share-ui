@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export function ShareCodeCard({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
@@ -9,9 +10,10 @@ export function ShareCodeCard({ code }: { code: string }) {
     try {
       await navigator.clipboard.writeText(code);
       setCopied(true);
+      toast.success("Copied");
       setTimeout(() => setCopied(false), 1800);
     } catch {
-      /* noop */
+      toast.error("Couldn't copy code");
     }
   };
 
@@ -20,9 +22,9 @@ export function ShareCodeCard({ code }: { code: string }) {
       <p className="text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
         Share Code
       </p>
-      <div className="mt-4 flex flex-col items-center gap-4">
-        <div className="w-full rounded-xl bg-primary-soft px-4 py-5 text-center">
-          <p className="font-mono text-4xl font-bold tracking-[0.35em] text-primary sm:text-5xl">
+      <div className="mt-5 flex flex-col items-center gap-5">
+        <div className="w-full rounded-2xl bg-primary-soft px-4 py-8 text-center">
+          <p className="font-mono text-5xl font-bold tracking-[0.35em] text-primary sm:text-6xl">
             {code}
           </p>
         </div>
