@@ -1,10 +1,12 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Tv, Zap, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/smartshare/Logo";
 import { UploadArea } from "@/components/smartshare/UploadArea";
 import { ProgressBar } from "@/components/smartshare/ProgressBar";
+import { uploadResource } from "@/lib/upload";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,29 +28,25 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const startUpload = () => {
+  const startUpload = async () => {
     if (!file || uploading) return;
     setUploading(true);
     setProgress(0);
-    // UI-only simulated progress
-    const iv = setInterval(() => {
-      setProgress((p) => {
-        const next = p + Math.floor(Math.random() * 12) + 6;
-        if (next >= 100) {
-          clearInterval(iv);
-          setTimeout(() => {
-            navigate({ to: "/success" });
-          }, 400);
-          return 100;
-        }
-        return next;
-      });
-    }, 220);
+    try {
+      const result = await uploadResource(file, { onProgress: setProgress });
+      console.log(result);
+      toast.success("Upload complete");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Upload failed";
+      console.error("Upload error:", err);
+      toast.error(message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
