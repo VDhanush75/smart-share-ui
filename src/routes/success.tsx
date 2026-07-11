@@ -15,7 +15,7 @@ export const Route = createFileRoute("/success")({
   head: () => ({
     meta: [
       { title: "Upload Successful — SmartShare" },
-      { name: "description", content: "Your file is ready to open on the Smart TV." },
+      { name: "description", content: "Your file is ready to open on the Device." },
     ],
   }),
   component: SuccessPage,
@@ -27,9 +27,7 @@ function SuccessPage() {
     select: (s) => (s.location.state as SuccessState) ?? {},
   });
   const shareCode = state.share_code ?? "";
-  const shareUrl = shareCode
-    ? `${typeof window !== "undefined" ? window.location.origin : ""}/view/${shareCode}`
-    : "";
+  const shareUrl = shareCode ? `${typeof window !== "undefined" ? window.location.origin : ""}/view/${shareCode}` : "";
 
   if (!shareCode) {
     return (
@@ -39,9 +37,7 @@ function SuccessPage() {
         </header>
         <main className="mx-auto max-w-md px-4 pb-16 pt-10 text-center sm:px-6">
           <h1 className="text-2xl font-bold text-foreground">No upload found</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Please upload a file first to generate a Share Code.
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">Please upload a file first to generate a Share Code.</p>
           <Button asChild size="lg" className="mt-6 rounded-full">
             <Link to="/">Go to Upload</Link>
           </Button>
@@ -61,9 +57,7 @@ function SuccessPage() {
           <div className="grid h-20 w-20 place-items-center rounded-full bg-success/10 text-success ring-8 ring-success/5">
             <CheckCircle2 className="h-12 w-12" strokeWidth={2.25} />
           </div>
-          <h1 className="mt-5 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Upload Successful
-          </h1>
+          <h1 className="mt-5 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">Upload Successful</h1>
           <p className="mt-2 max-w-md text-sm text-muted-foreground sm:text-base">
             {state.original_name
               ? `“${state.original_name}” is ready. Use the Share Code or scan the QR on your Smart TV.`
@@ -83,9 +77,7 @@ function SuccessPage() {
           <Button
             size="lg"
             className="rounded-full"
-            onClick={() =>
-              navigate({ to: "/view/$shareCode", params: { shareCode } })
-            }
+            onClick={() => navigate({ to: "/view/$shareCode", params: { shareCode } })}
           >
             Open Resource
           </Button>
@@ -94,4 +86,3 @@ function SuccessPage() {
     </div>
   );
 }
-
