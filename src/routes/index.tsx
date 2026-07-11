@@ -11,16 +11,18 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SmartShare — Share Files to Smart TV Instantly" },
+      { title: "SmartShare — Temporary Anonymous File Sharing Instantly" },
       {
         name: "description",
-        content:
-          "Upload any file from your phone and open it on the Smart TV using a Share Code or QR Code.",
+        content: "Upload any file from any device. and Access it from any device using the Share Code or QR Code.",
       },
-      { property: "og:title", content: "SmartShare — Share Files to Smart TV Instantly" },
+      {
+        property: "og:title",
+        content: "SmartShare — Share files Instantly between any devices using a temporary code.",
+      },
       {
         property: "og:description",
-        content: "Upload any file from your phone and open it on the Smart TV using a Share Code or QR Code.",
+        content: "Upload any file from any device. and Access it from any device using the Share Code or QR Code.",
       },
     ],
   }),
@@ -72,14 +74,13 @@ function HomePage() {
             <Zap className="h-3.5 w-3.5" /> Instant sharing
           </div>
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-5xl">
-            Share Files to Smart TV{" "}
+            Share Files to Instantly{" "}
             <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
               Instantly
             </span>
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-            Upload any file from your phone and open it on the Smart TV using a Share Code or QR
-            Code.
+            Upload any file from any device. and Access it from any device using the Share Code or QR Code.
           </p>
         </section>
 
@@ -105,10 +106,7 @@ function HomePage() {
             { icon: Tv, title: "Any TV", desc: "Works on any Smart TV browser" },
             { icon: Shield, title: "Private", desc: "Code-protected access" },
           ].map(({ icon: Icon, title, desc }) => (
-            <div
-              key={title}
-              className="rounded-2xl border border-border bg-card/60 p-4 text-center backdrop-blur"
-            >
+            <div key={title} className="rounded-2xl border border-border bg-card/60 p-4 text-center backdrop-blur">
               <div className="mx-auto grid h-10 w-10 place-items-center rounded-xl bg-primary-soft text-primary">
                 <Icon className="h-5 w-5" />
               </div>
