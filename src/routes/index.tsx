@@ -103,7 +103,7 @@ function HomePage() {
         <section className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-3">
           {[
             { icon: Zap, title: "Fast", desc: "Instant sharing in seconds" },
-            { icon: Tv, title: "Any TV", desc: "Works on any Smart TV browser" },
+            { icon: Device, title: "Any Device", desc: "Works on any Device browser" },
             { icon: Shield, title: "Private", desc: "Code-protected access" },
           ].map(({ icon: Icon, title, desc }) => (
             <div key={title} className="rounded-2xl border border-border bg-card/60 p-4 text-center backdrop-blur">
