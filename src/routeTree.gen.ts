@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuccessRouteImport } from './routes/success'
+import { Route as AdministratorRouteImport } from './routes/administrator'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdministratorIndexRouteImport } from './routes/administrator.index'
 import { Route as ViewShareCodeRouteImport } from './routes/view.$shareCode'
@@ -21,15 +22,20 @@ const SuccessRoute = SuccessRouteImport.update({
   path: '/success',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdministratorRoute = AdministratorRouteImport.update({
+  id: '/administrator',
+  path: '/administrator',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdministratorIndexRoute = AdministratorIndexRouteImport.update({
-  id: '/administrator/',
-  path: '/administrator/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdministratorRoute,
 } as any)
 const ViewShareCodeRoute = ViewShareCodeRouteImport.update({
   id: '/view/$shareCode',
@@ -37,9 +43,9 @@ const ViewShareCodeRoute = ViewShareCodeRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdministratorAnalyticsRoute = AdministratorAnalyticsRouteImport.update({
-  id: '/administrator/analytics',
-  path: '/administrator/analytics',
-  getParentRoute: () => rootRouteImport,
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdministratorRoute,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
@@ -49,6 +55,7 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/administrator': typeof AdministratorRouteWithChildren
   '/success': typeof SuccessRoute
   '/admin/login': typeof AdminLoginRoute
   '/administrator/analytics': typeof AdministratorAnalyticsRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/administrator': typeof AdministratorRouteWithChildren
   '/success': typeof SuccessRoute
   '/admin/login': typeof AdminLoginRoute
   '/administrator/analytics': typeof AdministratorAnalyticsRoute
@@ -76,6 +84,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/administrator'
     | '/success'
     | '/admin/login'
     | '/administrator/analytics'
@@ -92,6 +101,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/administrator'
     | '/success'
     | '/admin/login'
     | '/administrator/analytics'
@@ -101,11 +111,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdministratorRoute: typeof AdministratorRouteWithChildren
   SuccessRoute: typeof SuccessRoute
   AdminLoginRoute: typeof AdminLoginRoute
-  AdministratorAnalyticsRoute: typeof AdministratorAnalyticsRoute
   ViewShareCodeRoute: typeof ViewShareCodeRoute
-  AdministratorIndexRoute: typeof AdministratorIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -117,6 +126,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/administrator': {
+      id: '/administrator'
+      path: '/administrator'
+      fullPath: '/administrator'
+      preLoaderRoute: typeof AdministratorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -126,10 +142,10 @@ declare module '@tanstack/react-router' {
     }
     '/administrator/': {
       id: '/administrator/'
-      path: '/administrator'
+      path: '/'
       fullPath: '/administrator/'
       preLoaderRoute: typeof AdministratorIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdministratorRoute
     }
     '/view/$shareCode': {
       id: '/view/$shareCode'
@@ -140,10 +156,10 @@ declare module '@tanstack/react-router' {
     }
     '/administrator/analytics': {
       id: '/administrator/analytics'
-      path: '/administrator/analytics'
+      path: '/analytics'
       fullPath: '/administrator/analytics'
       preLoaderRoute: typeof AdministratorAnalyticsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdministratorRoute
     }
     '/admin/login': {
       id: '/admin/login'
@@ -155,13 +171,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdministratorRouteChildren {
+  AdministratorAnalyticsRoute: typeof AdministratorAnalyticsRoute
+  AdministratorIndexRoute: typeof AdministratorIndexRoute
+}
+
+const AdministratorRouteChildren: AdministratorRouteChildren = {
+  AdministratorAnalyticsRoute: AdministratorAnalyticsRoute,
+  AdministratorIndexRoute: AdministratorIndexRoute,
+}
+
+const AdministratorRouteWithChildren = AdministratorRoute._addFileChildren(
+  AdministratorRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdministratorRoute: AdministratorRouteWithChildren,
   SuccessRoute: SuccessRoute,
   AdminLoginRoute: AdminLoginRoute,
-  AdministratorAnalyticsRoute: AdministratorAnalyticsRoute,
   ViewShareCodeRoute: ViewShareCodeRoute,
-  AdministratorIndexRoute: AdministratorIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
