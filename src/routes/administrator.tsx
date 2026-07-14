@@ -136,7 +136,7 @@ function DashboardShell() {
     <div className="min-h-screen bg-muted/30 lg:flex">
       <Sidebar
         active={view}
-        onChange={setView}
+        onSelectView={(v) => setView(v)}
         onLogout={handleLogout}
         loggingOut={loggingOut}
         mobileOpen={mobileOpen}
