@@ -10,8 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuccessRouteImport } from './routes/success'
-import { Route as AdministratorRouteImport } from './routes/administrator'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdministratorIndexRouteImport } from './routes/administrator.index'
 import { Route as ViewShareCodeRouteImport } from './routes/view.$shareCode'
 import { Route as AdministratorAnalyticsRouteImport } from './routes/administrator.analytics'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -21,14 +21,14 @@ const SuccessRoute = SuccessRouteImport.update({
   path: '/success',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdministratorRoute = AdministratorRouteImport.update({
-  id: '/administrator',
-  path: '/administrator',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdministratorIndexRoute = AdministratorIndexRouteImport.update({
+  id: '/administrator/',
+  path: '/administrator/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ViewShareCodeRoute = ViewShareCodeRouteImport.update({
@@ -37,9 +37,9 @@ const ViewShareCodeRoute = ViewShareCodeRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdministratorAnalyticsRoute = AdministratorAnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
-  getParentRoute: () => AdministratorRoute,
+  id: '/administrator/analytics',
+  path: '/administrator/analytics',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
@@ -49,62 +49,63 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/administrator': typeof AdministratorRouteWithChildren
   '/success': typeof SuccessRoute
   '/admin/login': typeof AdminLoginRoute
   '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
+  '/administrator/': typeof AdministratorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/administrator': typeof AdministratorRouteWithChildren
   '/success': typeof SuccessRoute
   '/admin/login': typeof AdminLoginRoute
   '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
+  '/administrator': typeof AdministratorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/administrator': typeof AdministratorRouteWithChildren
   '/success': typeof SuccessRoute
   '/admin/login': typeof AdminLoginRoute
   '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
+  '/administrator/': typeof AdministratorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/administrator'
     | '/success'
     | '/admin/login'
     | '/administrator/analytics'
     | '/view/$shareCode'
+    | '/administrator/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/administrator'
     | '/success'
     | '/admin/login'
     | '/administrator/analytics'
     | '/view/$shareCode'
+    | '/administrator'
   id:
     | '__root__'
     | '/'
-    | '/administrator'
     | '/success'
     | '/admin/login'
     | '/administrator/analytics'
     | '/view/$shareCode'
+    | '/administrator/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdministratorRoute: typeof AdministratorRouteWithChildren
   SuccessRoute: typeof SuccessRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdministratorAnalyticsRoute: typeof AdministratorAnalyticsRoute
   ViewShareCodeRoute: typeof ViewShareCodeRoute
+  AdministratorIndexRoute: typeof AdministratorIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,18 +117,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/administrator': {
-      id: '/administrator'
-      path: '/administrator'
-      fullPath: '/administrator'
-      preLoaderRoute: typeof AdministratorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/administrator/': {
+      id: '/administrator/'
+      path: '/administrator'
+      fullPath: '/administrator/'
+      preLoaderRoute: typeof AdministratorIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/view/$shareCode': {
@@ -139,10 +140,10 @@ declare module '@tanstack/react-router' {
     }
     '/administrator/analytics': {
       id: '/administrator/analytics'
-      path: '/analytics'
+      path: '/administrator/analytics'
       fullPath: '/administrator/analytics'
       preLoaderRoute: typeof AdministratorAnalyticsRouteImport
-      parentRoute: typeof AdministratorRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/login': {
       id: '/admin/login'
@@ -154,35 +155,14 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AdministratorRouteChildren {
-  AdministratorAnalyticsRoute: typeof AdministratorAnalyticsRoute
-}
-
-const AdministratorRouteChildren: AdministratorRouteChildren = {
-  AdministratorAnalyticsRoute: AdministratorAnalyticsRoute,
-}
-
-const AdministratorRouteWithChildren = AdministratorRoute._addFileChildren(
-  AdministratorRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdministratorRoute: AdministratorRouteWithChildren,
   SuccessRoute: SuccessRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdministratorAnalyticsRoute: AdministratorAnalyticsRoute,
   ViewShareCodeRoute: ViewShareCodeRoute,
+  AdministratorIndexRoute: AdministratorIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

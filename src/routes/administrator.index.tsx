@@ -31,7 +31,7 @@ import { ConfirmDeleteDialog } from "@/components/dashboard/ConfirmDeleteDialog"
 import { LoadingState } from "@/components/dashboard/LoadingState";
 import { EmptyState } from "@/components/smartshare/EmptyState";
 
-export const Route = createFileRoute("/administrator")({
+export const Route = createFileRoute("/administrator/")({
   head: () => ({
     meta: [
       { title: "Administrator Dashboard — SmartShare" },
