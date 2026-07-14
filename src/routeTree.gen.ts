@@ -10,12 +10,19 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuccessRouteImport } from './routes/success'
+import { Route as AdministratorRouteImport } from './routes/administrator'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ViewShareCodeRouteImport } from './routes/view.$shareCode'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
 
 const SuccessRoute = SuccessRouteImport.update({
   id: '/success',
   path: '/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdministratorRoute = AdministratorRouteImport.update({
+  id: '/administrator',
+  path: '/administrator',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -28,34 +35,58 @@ const ViewShareCodeRoute = ViewShareCodeRouteImport.update({
   path: '/view/$shareCode',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/administrator': typeof AdministratorRoute
   '/success': typeof SuccessRoute
+  '/admin/login': typeof AdminLoginRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/administrator': typeof AdministratorRoute
   '/success': typeof SuccessRoute
+  '/admin/login': typeof AdminLoginRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/administrator': typeof AdministratorRoute
   '/success': typeof SuccessRoute
+  '/admin/login': typeof AdminLoginRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/success' | '/view/$shareCode'
+  fullPaths:
+    | '/'
+    | '/administrator'
+    | '/success'
+    | '/admin/login'
+    | '/view/$shareCode'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/success' | '/view/$shareCode'
-  id: '__root__' | '/' | '/success' | '/view/$shareCode'
+  to: '/' | '/administrator' | '/success' | '/admin/login' | '/view/$shareCode'
+  id:
+    | '__root__'
+    | '/'
+    | '/administrator'
+    | '/success'
+    | '/admin/login'
+    | '/view/$shareCode'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdministratorRoute: typeof AdministratorRoute
   SuccessRoute: typeof SuccessRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   ViewShareCodeRoute: typeof ViewShareCodeRoute
 }
 
@@ -66,6 +97,13 @@ declare module '@tanstack/react-router' {
       path: '/success'
       fullPath: '/success'
       preLoaderRoute: typeof SuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/administrator': {
+      id: '/administrator'
+      path: '/administrator'
+      fullPath: '/administrator'
+      preLoaderRoute: typeof AdministratorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -82,12 +120,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ViewShareCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdministratorRoute: AdministratorRoute,
   SuccessRoute: SuccessRoute,
+  AdminLoginRoute: AdminLoginRoute,
   ViewShareCodeRoute: ViewShareCodeRoute,
 }
 export const routeTree = rootRouteImport
