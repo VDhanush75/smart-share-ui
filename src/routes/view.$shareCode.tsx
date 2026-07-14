@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/smartshare/EmptyState";
 import { Button } from "@/components/ui/button";
 import {
   getResourceByShareCode,
-  incrementViews,
+  trackResourceView,
   fetchTextPreview,
   downloadResource,
   type ResourceRow,
@@ -49,7 +49,7 @@ function ViewPage() {
         }
         setResource(res);
         setStatus("ready");
-        incrementViews(res.id).catch(() => {
+        trackResourceView(res.id).catch(() => {
           /* non-critical */
         });
       } catch (e) {
