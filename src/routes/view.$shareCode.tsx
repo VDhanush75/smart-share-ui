@@ -49,7 +49,7 @@ function ViewPage() {
         }
         setResource(res);
         setStatus("ready");
-        incrementViews(res.id).catch(() => {
+        trackResourceView(res.id).catch(() => {
           /* non-critical */
         });
       } catch (e) {
