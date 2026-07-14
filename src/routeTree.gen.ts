@@ -10,12 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuccessRouteImport } from './routes/success'
+import { Route as AdministratorRouteImport } from './routes/administrator'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdministratorIndexRouteImport } from './routes/administrator.index'
 import { Route as ViewShareCodeRouteImport } from './routes/view.$shareCode'
+import { Route as AdministratorAnalyticsRouteImport } from './routes/administrator.analytics'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
 
 const SuccessRoute = SuccessRouteImport.update({
   id: '/success',
   path: '/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdministratorRoute = AdministratorRouteImport.update({
+  id: '/administrator',
+  path: '/administrator',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -23,39 +32,88 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdministratorIndexRoute = AdministratorIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdministratorRoute,
+} as any)
 const ViewShareCodeRoute = ViewShareCodeRouteImport.update({
   id: '/view/$shareCode',
   path: '/view/$shareCode',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdministratorAnalyticsRoute = AdministratorAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdministratorRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/administrator': typeof AdministratorRouteWithChildren
   '/success': typeof SuccessRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
+  '/administrator/': typeof AdministratorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/success': typeof SuccessRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
+  '/administrator': typeof AdministratorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/administrator': typeof AdministratorRouteWithChildren
   '/success': typeof SuccessRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
+  '/administrator/': typeof AdministratorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/success' | '/view/$shareCode'
+  fullPaths:
+    | '/'
+    | '/administrator'
+    | '/success'
+    | '/admin/login'
+    | '/administrator/analytics'
+    | '/view/$shareCode'
+    | '/administrator/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/success' | '/view/$shareCode'
-  id: '__root__' | '/' | '/success' | '/view/$shareCode'
+  to:
+    | '/'
+    | '/success'
+    | '/admin/login'
+    | '/administrator/analytics'
+    | '/view/$shareCode'
+    | '/administrator'
+  id:
+    | '__root__'
+    | '/'
+    | '/administrator'
+    | '/success'
+    | '/admin/login'
+    | '/administrator/analytics'
+    | '/view/$shareCode'
+    | '/administrator/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdministratorRoute: typeof AdministratorRouteWithChildren
   SuccessRoute: typeof SuccessRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   ViewShareCodeRoute: typeof ViewShareCodeRoute
 }
 
@@ -68,12 +126,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/administrator': {
+      id: '/administrator'
+      path: '/administrator'
+      fullPath: '/administrator'
+      preLoaderRoute: typeof AdministratorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/administrator/': {
+      id: '/administrator/'
+      path: '/'
+      fullPath: '/administrator/'
+      preLoaderRoute: typeof AdministratorIndexRouteImport
+      parentRoute: typeof AdministratorRoute
     }
     '/view/$shareCode': {
       id: '/view/$shareCode'
@@ -82,12 +154,42 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ViewShareCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/administrator/analytics': {
+      id: '/administrator/analytics'
+      path: '/analytics'
+      fullPath: '/administrator/analytics'
+      preLoaderRoute: typeof AdministratorAnalyticsRouteImport
+      parentRoute: typeof AdministratorRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AdministratorRouteChildren {
+  AdministratorAnalyticsRoute: typeof AdministratorAnalyticsRoute
+  AdministratorIndexRoute: typeof AdministratorIndexRoute
+}
+
+const AdministratorRouteChildren: AdministratorRouteChildren = {
+  AdministratorAnalyticsRoute: AdministratorAnalyticsRoute,
+  AdministratorIndexRoute: AdministratorIndexRoute,
+}
+
+const AdministratorRouteWithChildren = AdministratorRoute._addFileChildren(
+  AdministratorRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdministratorRoute: AdministratorRouteWithChildren,
   SuccessRoute: SuccessRoute,
+  AdminLoginRoute: AdminLoginRoute,
   ViewShareCodeRoute: ViewShareCodeRoute,
 }
 export const routeTree = rootRouteImport
