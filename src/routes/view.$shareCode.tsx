@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/smartshare/EmptyState";
 import { Button } from "@/components/ui/button";
 import {
   getResourceByShareCode,
-  incrementViews,
+  trackResourceView,
   fetchTextPreview,
   downloadResource,
   type ResourceRow,
