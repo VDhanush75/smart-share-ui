@@ -1,25 +1,47 @@
-import { LayoutDashboard, FolderOpen, LogOut, X } from "lucide-react";
+import { BarChart3, FolderOpen, LayoutDashboard, LogOut, X } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { Logo } from "@/components/smartshare/Logo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export type DashboardView = "dashboard" | "resources";
+export type DashboardView = "dashboard" | "resources" | "analytics";
 
 interface SidebarProps {
   active: DashboardView;
-  onChange: (view: DashboardView) => void;
+  /** Called for the state-driven views on the /administrator page. Omit on other routes. */
+  onSelectView?: (view: "dashboard" | "resources") => void;
   onLogout: () => void;
   loggingOut?: boolean;
   mobileOpen: boolean;
   onMobileClose: () => void;
 }
 
-const items: { id: DashboardView; label: string; icon: typeof LayoutDashboard }[] = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "resources", label: "Resources", icon: FolderOpen },
+type NavItem =
+  | { id: "dashboard" | "resources"; label: string; icon: typeof LayoutDashboard; kind: "view" }
+  | { id: "analytics"; label: string; icon: typeof LayoutDashboard; kind: "route"; to: string };
+
+const items: NavItem[] = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, kind: "view" },
+  { id: "resources", label: "Resources", icon: FolderOpen, kind: "view" },
+  { id: "analytics", label: "Analytics", icon: BarChart3, kind: "route", to: "/administrator/analytics" },
 ];
 
-export function Sidebar({ active, onChange, onLogout, loggingOut, mobileOpen, onMobileClose }: SidebarProps) {
+export function Sidebar({ active, onSelectView, onLogout, loggingOut, mobileOpen, onMobileClose }: SidebarProps) {
+  const navigate = useNavigate();
+
+  const handleClick = (item: NavItem) => {
+    onMobileClose();
+    if (item.kind === "route") {
+      void navigate({ to: item.to });
+      return;
+    }
+    if (onSelectView) {
+      onSelectView(item.id);
+    } else {
+      void navigate({ to: "/administrator", search: { view: item.id } as never });
+    }
+  };
+
   return (
     <>
       {mobileOpen && (
@@ -54,10 +76,7 @@ export function Sidebar({ active, onChange, onLogout, loggingOut, mobileOpen, on
               <button
                 key={item.id}
                 type="button"
-                onClick={() => {
-                  onChange(item.id);
-                  onMobileClose();
-                }}
+                onClick={() => handleClick(item)}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
