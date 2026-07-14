@@ -65,6 +65,17 @@ export async function incrementViews(resourceId: string): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
+export async function logResourceView(resourceId: string): Promise<void> {
+  const { error } = await supabase
+    .from("resource_views")
+    .insert({ resource_id: resourceId });
+  if (error) throw new Error(error.message);
+}
+
+export async function trackResourceView(resourceId: string): Promise<void> {
+  await Promise.allSettled([incrementViews(resourceId), logResourceView(resourceId)]);
+}
+
 export async function incrementDownloads(resourceId: string): Promise<void> {
   const { data, error: fetchError } = await supabase
     .from("resources")
