@@ -8,6 +8,7 @@ import {
   getResourceByShareCode,
   incrementViews,
   fetchTextPreview,
+  downloadResource,
   type ResourceRow,
 } from "@/services/resourceService";
 
@@ -62,17 +63,24 @@ function ViewPage() {
     };
   }, [shareCode]);
 
-  const handleDownload = () => {
-    if (!resource) return;
-    const a = document.createElement("a");
-    a.href = resource.public_url;
-    a.download = resource.original_name;
-    a.rel = "noopener";
-    a.target = "_blank";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    if (!resource || downloading) return;
+    setDownloading(true);
+    try {
+      await downloadResource({
+        id: resource.id,
+        public_url: resource.public_url,
+        original_name: resource.original_name,
+      });
+    } catch (e) {
+      console.error("Download failed", e);
+    } finally {
+      setDownloading(false);
+    }
   };
+
 
   if (status === "loading") {
     return (
