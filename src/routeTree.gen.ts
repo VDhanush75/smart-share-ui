@@ -13,6 +13,7 @@ import { Route as SuccessRouteImport } from './routes/success'
 import { Route as AdministratorRouteImport } from './routes/administrator'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ViewShareCodeRouteImport } from './routes/view.$shareCode'
+import { Route as AdministratorAnalyticsRouteImport } from './routes/administrator.analytics'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 
 const SuccessRoute = SuccessRouteImport.update({
@@ -35,6 +36,11 @@ const ViewShareCodeRoute = ViewShareCodeRouteImport.update({
   path: '/view/$shareCode',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdministratorAnalyticsRoute = AdministratorAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdministratorRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
@@ -43,24 +49,27 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/administrator': typeof AdministratorRoute
+  '/administrator': typeof AdministratorRouteWithChildren
   '/success': typeof SuccessRoute
   '/admin/login': typeof AdminLoginRoute
+  '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/administrator': typeof AdministratorRoute
+  '/administrator': typeof AdministratorRouteWithChildren
   '/success': typeof SuccessRoute
   '/admin/login': typeof AdminLoginRoute
+  '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/administrator': typeof AdministratorRoute
+  '/administrator': typeof AdministratorRouteWithChildren
   '/success': typeof SuccessRoute
   '/admin/login': typeof AdminLoginRoute
+  '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
 }
 export interface FileRouteTypes {
@@ -70,21 +79,29 @@ export interface FileRouteTypes {
     | '/administrator'
     | '/success'
     | '/admin/login'
+    | '/administrator/analytics'
     | '/view/$shareCode'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/administrator' | '/success' | '/admin/login' | '/view/$shareCode'
+  to:
+    | '/'
+    | '/administrator'
+    | '/success'
+    | '/admin/login'
+    | '/administrator/analytics'
+    | '/view/$shareCode'
   id:
     | '__root__'
     | '/'
     | '/administrator'
     | '/success'
     | '/admin/login'
+    | '/administrator/analytics'
     | '/view/$shareCode'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdministratorRoute: typeof AdministratorRoute
+  AdministratorRoute: typeof AdministratorRouteWithChildren
   SuccessRoute: typeof SuccessRoute
   AdminLoginRoute: typeof AdminLoginRoute
   ViewShareCodeRoute: typeof ViewShareCodeRoute
@@ -120,6 +137,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ViewShareCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/administrator/analytics': {
+      id: '/administrator/analytics'
+      path: '/analytics'
+      fullPath: '/administrator/analytics'
+      preLoaderRoute: typeof AdministratorAnalyticsRouteImport
+      parentRoute: typeof AdministratorRoute
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/admin/login'
@@ -130,9 +154,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdministratorRouteChildren {
+  AdministratorAnalyticsRoute: typeof AdministratorAnalyticsRoute
+}
+
+const AdministratorRouteChildren: AdministratorRouteChildren = {
+  AdministratorAnalyticsRoute: AdministratorAnalyticsRoute,
+}
+
+const AdministratorRouteWithChildren = AdministratorRoute._addFileChildren(
+  AdministratorRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdministratorRoute: AdministratorRoute,
+  AdministratorRoute: AdministratorRouteWithChildren,
   SuccessRoute: SuccessRoute,
   AdminLoginRoute: AdminLoginRoute,
   ViewShareCodeRoute: ViewShareCodeRoute,
