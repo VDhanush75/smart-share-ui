@@ -8,6 +8,7 @@ import {
   getResourceByShareCode,
   incrementViews,
   fetchTextPreview,
+  downloadResource,
   type ResourceRow,
 } from "@/services/resourceService";
 
