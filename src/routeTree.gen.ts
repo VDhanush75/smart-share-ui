@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuccessRouteImport } from './routes/success'
 import { Route as AdministratorRouteImport } from './routes/administrator'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdministratorIndexRouteImport } from './routes/administrator.index'
 import { Route as ViewShareCodeRouteImport } from './routes/view.$shareCode'
 import { Route as AdministratorAnalyticsRouteImport } from './routes/administrator.analytics'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -30,6 +31,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdministratorIndexRoute = AdministratorIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdministratorRoute,
 } as any)
 const ViewShareCodeRoute = ViewShareCodeRouteImport.update({
   id: '/view/$shareCode',
@@ -54,14 +60,15 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
+  '/administrator/': typeof AdministratorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/administrator': typeof AdministratorRouteWithChildren
   '/success': typeof SuccessRoute
   '/admin/login': typeof AdminLoginRoute
   '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
+  '/administrator': typeof AdministratorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +78,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
+  '/administrator/': typeof AdministratorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,14 +89,15 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/administrator/analytics'
     | '/view/$shareCode'
+    | '/administrator/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/administrator'
     | '/success'
     | '/admin/login'
     | '/administrator/analytics'
     | '/view/$shareCode'
+    | '/administrator'
   id:
     | '__root__'
     | '/'
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/administrator/analytics'
     | '/view/$shareCode'
+    | '/administrator/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -130,6 +140,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/administrator/': {
+      id: '/administrator/'
+      path: '/'
+      fullPath: '/administrator/'
+      preLoaderRoute: typeof AdministratorIndexRouteImport
+      parentRoute: typeof AdministratorRoute
+    }
     '/view/$shareCode': {
       id: '/view/$shareCode'
       path: '/view/$shareCode'
@@ -156,10 +173,12 @@ declare module '@tanstack/react-router' {
 
 interface AdministratorRouteChildren {
   AdministratorAnalyticsRoute: typeof AdministratorAnalyticsRoute
+  AdministratorIndexRoute: typeof AdministratorIndexRoute
 }
 
 const AdministratorRouteChildren: AdministratorRouteChildren = {
   AdministratorAnalyticsRoute: AdministratorAnalyticsRoute,
+  AdministratorIndexRoute: AdministratorIndexRoute,
 }
 
 const AdministratorRouteWithChildren = AdministratorRoute._addFileChildren(
