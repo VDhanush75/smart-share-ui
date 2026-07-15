@@ -17,6 +17,7 @@ export interface ResourceRow extends CreateResourceInput {
   id: string;
   created_at: string;
   views?: number;
+  downloads?: number;
 }
 
 export class ResourceDeleteError extends Error {
