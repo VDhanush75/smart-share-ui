@@ -19,6 +19,44 @@ export interface ResourceRow extends CreateResourceInput {
   views?: number;
 }
 
+export class ResourceDeleteError extends Error {
+  storageDeleted: boolean;
+  constructor(message: string, storageDeleted: boolean) {
+    super(message);
+    this.name = "ResourceDeleteError";
+    this.storageDeleted = storageDeleted;
+  }
+}
+
+export async function deleteResource(
+  id: string,
+  storagePath: string,
+): Promise<void> {
+  const { error: storageError } = await supabase.storage
+    .from(RESOURCES_BUCKET)
+    .remove([storagePath]);
+
+  if (storageError) {
+    throw new ResourceDeleteError(
+      `Failed to delete file from storage: ${storageError.message}`,
+      false,
+    );
+  }
+
+  const { error: dbError } = await supabase.from("resources").delete().eq("id", id);
+
+  if (dbError) {
+    console.error(
+      `[resourceService] Storage object '${storagePath}' was deleted, but removing resource row '${id}' failed:`,
+      dbError,
+    );
+    throw new ResourceDeleteError(
+      `File was removed from storage, but deleting the database record failed: ${dbError.message}`,
+      true,
+    );
+  }
+}
+
 export async function createResource(input: CreateResourceInput): Promise<ResourceRow> {
   const { data, error } = await supabase
     .from("resources")

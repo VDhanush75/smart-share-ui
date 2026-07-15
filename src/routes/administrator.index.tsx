@@ -21,6 +21,7 @@ import {
   getRecentUploads,
   type DashboardStats,
 } from "@/services/dashboardService";
+import { ResourceDeleteError } from "@/services/resourceService";
 import type { ResourceRow } from "@/services/resourceService";
 
 import { Sidebar, type DashboardView } from "@/components/dashboard/Sidebar";
@@ -108,8 +109,16 @@ function DashboardShell() {
       setTarget(null);
       await load(true);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Delete failed";
-      toast.error(message);
+      if (err instanceof ResourceDeleteError && err.storageDeleted) {
+        toast.error(err.message, {
+          description: "The file was removed from storage but the database record remains. Please retry or contact support.",
+        });
+        setTarget(null);
+        await load(true);
+      } else {
+        const message = err instanceof Error ? err.message : "Delete failed";
+        toast.error(message);
+      }
     } finally {
       setDeleting(false);
     }
