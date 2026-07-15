@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
-import { RESOURCES_BUCKET } from "@/lib/upload";
 import type { ResourceRow } from "./resourceService";
+export { deleteResource, ResourceDeleteError } from "./resourceService";
 
 export interface DashboardStats {
   totalUploads: number;
