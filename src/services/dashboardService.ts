@@ -64,13 +64,3 @@ export async function getAllUploads(): Promise<ResourceRow[]> {
   if (error) throw new Error(error.message);
   return (data ?? []) as ResourceRow[];
 }
-
-export async function deleteResource(id: string, storagePath: string): Promise<void> {
-  const { error: storageError } = await supabase.storage
-    .from(RESOURCES_BUCKET)
-    .remove([storagePath]);
-  if (storageError) throw new Error(storageError.message);
-
-  const { error } = await supabase.from("resources").delete().eq("id", id);
-  if (error) throw new Error(error.message);
-}
