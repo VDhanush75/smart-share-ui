@@ -164,9 +164,13 @@ export async function downloadResource(resource: {
     setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
   }
 
+  await trackResourceDownload(resource.id);
+}
+
+export async function trackResourceDownload(resourceId: string): Promise<void> {
   await Promise.allSettled([
-    incrementDownloads(resource.id),
-    logResourceDownload(resource.id),
+    incrementDownloads(resourceId),
+    logResourceDownload(resourceId),
   ]);
 }
 
