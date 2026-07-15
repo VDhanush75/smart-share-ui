@@ -21,6 +21,7 @@ import {
   getRecentUploads,
   type DashboardStats,
 } from "@/services/dashboardService";
+import { ResourceDeleteError } from "@/services/resourceService";
 import type { ResourceRow } from "@/services/resourceService";
 
 import { Sidebar, type DashboardView } from "@/components/dashboard/Sidebar";
