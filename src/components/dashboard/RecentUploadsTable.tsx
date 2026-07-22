@@ -17,8 +17,8 @@ interface RecentUploadsTableProps {
   onDelete: (row: ResourceRow) => void;
 }
 
-function formatBytes(bytes: number): string {
-  if (!bytes) return "0 B";
+function formatBytes(bytes: number | null | undefined): string {
+  if (!bytes) return "—";
   const units = ["B", "KB", "MB", "GB"];
   const i = Math.min(units.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
   return `${(bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
