@@ -16,6 +16,7 @@ import { Logo } from "@/components/smartshare/Logo";
 import { UploadArea } from "@/components/smartshare/UploadArea";
 import { ProgressBar } from "@/components/smartshare/ProgressBar";
 import { OpenResourceCard } from "@/components/smartshare/OpenResourceCard";
+import { SiteFooter } from "@/components/smartshare/SiteFooter";
 import { uploadAndRegisterFile } from "@/services/uploadService";
 import { createTextResource, SUPPORTED_LANGUAGES } from "@/services/textService";
 import { toast } from "sonner";
@@ -229,6 +230,7 @@ function HomePage() {
 
         <OpenResourceCard />
       </main>
+      <SiteFooter />
     </div>
   );
 }

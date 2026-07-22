@@ -9,7 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SuccessRouteImport } from './routes/success'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdministratorRouteImport } from './routes/administrator'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdministratorIndexRouteImport } from './routes/administrator.index'
@@ -17,9 +20,24 @@ import { Route as ViewShareCodeRouteImport } from './routes/view.$shareCode'
 import { Route as AdministratorAnalyticsRouteImport } from './routes/administrator.analytics'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SuccessRoute = SuccessRouteImport.update({
   id: '/success',
   path: '/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdministratorRoute = AdministratorRouteImport.update({
@@ -56,7 +74,10 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/administrator': typeof AdministratorRouteWithChildren
+  '/contact': typeof ContactRoute
+  '/privacy': typeof PrivacyRoute
   '/success': typeof SuccessRoute
+  '/terms': typeof TermsRoute
   '/admin/login': typeof AdminLoginRoute
   '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
@@ -64,7 +85,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
+  '/privacy': typeof PrivacyRoute
   '/success': typeof SuccessRoute
+  '/terms': typeof TermsRoute
   '/admin/login': typeof AdminLoginRoute
   '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
@@ -74,7 +98,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/administrator': typeof AdministratorRouteWithChildren
+  '/contact': typeof ContactRoute
+  '/privacy': typeof PrivacyRoute
   '/success': typeof SuccessRoute
+  '/terms': typeof TermsRoute
   '/admin/login': typeof AdminLoginRoute
   '/administrator/analytics': typeof AdministratorAnalyticsRoute
   '/view/$shareCode': typeof ViewShareCodeRoute
@@ -85,7 +112,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/administrator'
+    | '/contact'
+    | '/privacy'
     | '/success'
+    | '/terms'
     | '/admin/login'
     | '/administrator/analytics'
     | '/view/$shareCode'
@@ -93,7 +123,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/contact'
+    | '/privacy'
     | '/success'
+    | '/terms'
     | '/admin/login'
     | '/administrator/analytics'
     | '/view/$shareCode'
@@ -102,7 +135,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/administrator'
+    | '/contact'
+    | '/privacy'
     | '/success'
+    | '/terms'
     | '/admin/login'
     | '/administrator/analytics'
     | '/view/$shareCode'
@@ -112,18 +148,42 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdministratorRoute: typeof AdministratorRouteWithChildren
+  ContactRoute: typeof ContactRoute
+  PrivacyRoute: typeof PrivacyRoute
   SuccessRoute: typeof SuccessRoute
+  TermsRoute: typeof TermsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   ViewShareCodeRoute: typeof ViewShareCodeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/success': {
       id: '/success'
       path: '/success'
       fullPath: '/success'
       preLoaderRoute: typeof SuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/administrator': {
@@ -188,20 +248,13 @@ const AdministratorRouteWithChildren = AdministratorRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdministratorRoute: AdministratorRouteWithChildren,
+  ContactRoute: ContactRoute,
+  PrivacyRoute: PrivacyRoute,
   SuccessRoute: SuccessRoute,
+  TermsRoute: TermsRoute,
   AdminLoginRoute: AdminLoginRoute,
   ViewShareCodeRoute: ViewShareCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
