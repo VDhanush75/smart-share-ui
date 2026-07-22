@@ -42,7 +42,8 @@ export async function deleteResource(
   id: string,
   storagePath: string | null,
 ): Promise<void> {
-  if (storagePath) {
+  const isVirtual = !storagePath || storagePath.startsWith("text/");
+  if (storagePath && !isVirtual) {
     const { error: storageError } = await supabase.storage
       .from(RESOURCES_BUCKET)
       .remove([storagePath]);

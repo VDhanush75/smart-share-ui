@@ -14,16 +14,16 @@ export async function createTextResource(
 ): Promise<ResourceRow> {
   const share_code = generateShareCode();
   const expires_at = new Date(Date.now() + EXPIRY_MS).toISOString();
-  const title = input.title.trim() || `Snippet ${share_code}`;
+  const title = input.title.trim() || "Untitled";
 
   return createResource({
     share_code,
     original_name: title,
-    storage_path: null,
+    storage_path: `text/${share_code}`,
     public_url: null,
     file_type: "document",
     mime_type: "text/plain",
-    file_size: new Blob([input.content]).size,
+    file_size: input.content.length,
     expires_at,
     resource_type: "text",
     text_content: input.content,
