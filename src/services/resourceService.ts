@@ -75,7 +75,9 @@ export async function createResource(input: CreateResourceInput): Promise<Resour
     .single();
 
   if (error) {
-    await supabase.storage.from(RESOURCES_BUCKET).remove([input.storage_path]);
+    if (input.storage_path) {
+      await supabase.storage.from(RESOURCES_BUCKET).remove([input.storage_path]);
+    }
     throw new Error(error.message);
   }
 
