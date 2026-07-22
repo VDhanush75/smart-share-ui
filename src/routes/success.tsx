@@ -92,6 +92,7 @@ function SuccessPage() {
           </Button>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }
