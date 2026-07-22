@@ -40,17 +40,19 @@ export class ResourceDeleteError extends Error {
 
 export async function deleteResource(
   id: string,
-  storagePath: string,
+  storagePath: string | null,
 ): Promise<void> {
-  const { error: storageError } = await supabase.storage
-    .from(RESOURCES_BUCKET)
-    .remove([storagePath]);
+  if (storagePath) {
+    const { error: storageError } = await supabase.storage
+      .from(RESOURCES_BUCKET)
+      .remove([storagePath]);
 
-  if (storageError) {
-    throw new ResourceDeleteError(
-      `Failed to delete file from storage: ${storageError.message}`,
-      false,
-    );
+    if (storageError) {
+      throw new ResourceDeleteError(
+        `Failed to delete file from storage: ${storageError.message}`,
+        false,
+      );
+    }
   }
 
   const { error: dbError } = await supabase.from("resources").delete().eq("id", id);
