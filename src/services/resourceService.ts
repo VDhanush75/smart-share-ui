@@ -2,15 +2,20 @@ import { supabase } from "@/lib/supabase";
 import { RESOURCES_BUCKET } from "@/lib/upload";
 import type { FileCategory } from "@/utils/fileCategory";
 
+export type ResourceType = "file" | "text";
+
 export interface CreateResourceInput {
   share_code: string;
   original_name: string;
-  storage_path: string;
-  public_url: string;
+  storage_path: string | null;
+  public_url: string | null;
   file_type: FileCategory;
-  mime_type: string;
-  file_size: number;
+  mime_type: string | null;
+  file_size: number | null;
   expires_at: string;
+  resource_type?: ResourceType;
+  text_content?: string | null;
+  language?: string | null;
 }
 
 export interface ResourceRow extends CreateResourceInput {
@@ -18,7 +23,11 @@ export interface ResourceRow extends CreateResourceInput {
   created_at: string;
   views?: number;
   downloads?: number;
+  resource_type: ResourceType;
+  text_content: string | null;
+  language: string | null;
 }
+
 
 export class ResourceDeleteError extends Error {
   storageDeleted: boolean;
