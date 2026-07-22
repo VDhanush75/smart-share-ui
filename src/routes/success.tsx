@@ -5,6 +5,7 @@ import { Logo } from "@/components/smartshare/Logo";
 import { ShareCodeCard } from "@/components/smartshare/ShareCodeCard";
 import { QRCard } from "@/components/smartshare/QRCard";
 import { DirectLinkCard } from "@/components/smartshare/DirectLinkCard";
+import { SiteFooter } from "@/components/smartshare/SiteFooter";
 
 interface SuccessState {
   share_code?: string;
@@ -32,28 +33,29 @@ function SuccessPage() {
 
   if (!shareCode) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-primary-soft/40 via-background to-background">
-        <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
+      <div className="flex min-h-screen flex-col bg-gradient-to-b from-primary-soft/40 via-background to-background">
+        <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
           <Logo />
         </header>
-        <main className="mx-auto max-w-md px-4 pb-16 pt-10 text-center sm:px-6">
+        <main className="mx-auto max-w-md flex-1 px-4 pb-16 pt-10 text-center sm:px-6">
           <h1 className="text-2xl font-bold text-foreground">No upload found</h1>
           <p className="mt-2 text-sm text-muted-foreground">Please upload a file first to generate a Share Code.</p>
           <Button asChild size="lg" className="mt-6 rounded-full">
             <Link to="/">Go to Upload</Link>
           </Button>
         </main>
+        <SiteFooter />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-soft/40 via-background to-background">
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-primary-soft/40 via-background to-background">
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
         <Logo />
       </header>
 
-      <main className="mx-auto max-w-3xl px-4 pb-16 pt-4 sm:px-6">
+      <main className="mx-auto max-w-3xl flex-1 px-4 pb-16 pt-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <div className="grid h-20 w-20 place-items-center rounded-full bg-success/10 text-success ring-8 ring-success/5">
             <CheckCircle2 className="h-12 w-12" strokeWidth={2.25} />
@@ -90,6 +92,7 @@ function SuccessPage() {
           </Button>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

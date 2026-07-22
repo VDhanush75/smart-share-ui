@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
+import { SiteFooter } from "./SiteFooter";
 
 interface ViewerLayoutProps {
   resourceName: string;
@@ -25,6 +26,7 @@ export function ViewerLayout({ resourceName, onDownload, children }: ViewerLayou
         </div>
       </header>
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-10">{children}</main>
+      <SiteFooter />
     </div>
   );
 }
