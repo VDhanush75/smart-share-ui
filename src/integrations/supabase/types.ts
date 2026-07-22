@@ -50,6 +50,60 @@ export type Database = {
         }
         Relationships: []
       }
+      resources: {
+        Row: {
+          created_at: string
+          downloads: number
+          expires_at: string
+          file_size: number | null
+          file_type: string
+          id: string
+          language: string | null
+          mime_type: string | null
+          original_name: string
+          public_url: string | null
+          resource_type: string
+          share_code: string
+          storage_path: string | null
+          text_content: string | null
+          views: number
+        }
+        Insert: {
+          created_at?: string
+          downloads?: number
+          expires_at: string
+          file_size?: number | null
+          file_type: string
+          id?: string
+          language?: string | null
+          mime_type?: string | null
+          original_name: string
+          public_url?: string | null
+          resource_type?: string
+          share_code: string
+          storage_path?: string | null
+          text_content?: string | null
+          views?: number
+        }
+        Update: {
+          created_at?: string
+          downloads?: number
+          expires_at?: string
+          file_size?: number | null
+          file_type?: string
+          id?: string
+          language?: string | null
+          mime_type?: string | null
+          original_name?: string
+          public_url?: string | null
+          resource_type?: string
+          share_code?: string
+          storage_path?: string | null
+          text_content?: string | null
+          views?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
